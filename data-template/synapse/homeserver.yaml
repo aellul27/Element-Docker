@@ -1,0 +1,94 @@
+
+# Configuration file for Synapse.
+#
+# This is a YAML file: see [1] for a quick introduction. Note in particular
+# that *indentation is important*: all the elements of a list or dictionary
+# should have the same indentation.
+#
+# [1] https://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html
+#
+# For more information on how to configure Synapse, including a complete accounting of
+# each option, go to docs/usage/configuration/config_documentation.md or
+# https://element-hq.github.io/synapse/latest/usage/configuration/config_documentation.html
+server_name: ${DOMAIN}
+pid_file: /data/homeserver.pid
+listeners:
+  - port: 8008
+    tls: false
+    type: http
+    x_forwarded: true
+    resources:
+      - names: [client, federation]
+        compress: false
+
+database:
+    name: psycopg2
+    args:
+        user: matrix
+        password: '${SECRETS_POSTGRES_PASSWORD}'
+        host: postgres
+        database: synapse
+
+log_config: "/data/log.config"
+media_store_path: /data/media_store
+registration_shared_secret: '${SECRETS_SYNAPSE_REGISTRATION_SHARED_SECRET}'
+report_stats: false
+macaroon_secret_key: '${SECRETS_SYNAPSE_MACAROON_SECRET_KEY}'
+form_secret: '${SECRETS_SYNAPSE_FORM_SECRET}'
+signing_key_path: "/run/secrets/synapse_signing_key"
+trusted_key_servers:
+  - server_name: "matrix.org"
+
+# please keep config above this point as close as possible to the original generated config
+# so that upstream generated config changes can be detected
+
+public_baseurl: https://${HOMESERVER_FQDN}/
+suppress_key_server_warning: true
+
+enable_registration: true
+
+# redis:
+#   enabled: true
+#   host: redis
+#   port: 6379
+
+# as we want our first launch and subsequent upgrades to go as fast
+# as possible don't sleep between background updates
+background_updates:
+    sleep_enabled: false
+
+# temporarily boost rate-limits to avoid breaking WIP MatrixRTC signalling
+# rc_message:
+#   per_second: 2
+#   burst_count: 15
+
+experimental_features:
+  # msc3861: # OIDC
+  #   enabled: true
+  #   issuer: https://${DOMAIN}/
+  #   client_id: ${MAS_CLIENT_ID}
+  #   client_auth_method: client_secret_basic
+  #   client_secret: '${SECRETS_MAS_CLIENT_SECRET}'
+  #   admin_token: '${SECRETS_MAS_MATRIX_SECRET}'
+  #   account_management_url: "https://${MAS_FQDN}/account"
+
+  # # QR login
+  # msc4108_enabled: true
+
+  # MSC3266: Room summary API. Used for knocking over federation
+  msc3266_enabled: true
+
+  # state_after in /sync v2, needed for reliable state in busy rooms
+  # especially Element Call
+  msc4222_enabled: true
+
+  # disable_badge_count to get accurate app badge counts in Element X
+  msc4076_enabled: true
+
+# The maximum allowed duration by which sent events can be delayed, as
+# per MSC4140. Must be a positive value if set.  Defaults to no
+# duration (null), which disallows sending delayed events.
+# Needed for MatrixRTC to avoid stuck calls
+max_event_delay_duration: 24h
+
+# vim:ft=yaml

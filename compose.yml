@@ -4,8 +4,24 @@ networks:
 secrets:
   postgres_password:
     file: secrets/postgres/postgres_password
+  synapse_signing_key:
+    file: secrets/synapse/signing.key
 
 services:
+  generate-synapse-secrets:
+    image: ghcr.io/element-hq/synapse:latest
+    user: $USER_ID:$GROUP_ID
+    restart: "no"
+    volumes:
+      - ${VOLUME_PATH}/data/synapse:/data:rw
+      - ${VOLUME_PATH}/init/generate-synapse-secrets.sh:/entrypoint.sh
+    env_file: .env
+    environment:
+      SYNAPSE_CONFIG_DIR: /data
+      SYNAPSE_CONFIG_PATH: /data/homeserver.yaml.default
+      SYNAPSE_SERVER_NAME: ${DOMAIN}
+      SYNAPSE_REPORT_STATS: ${REPORT_STATS}
+    entrypoint: "/entrypoint.sh"
   postgres:
     image: postgres:latest
     restart: unless-stopped
@@ -42,3 +58,40 @@ services:
       - ${VOLUME_PATH}/init/init.sh:/init.sh
     command: "/init.sh"
     env_file: .env
+    depends_on:
+      generate-synapse-secrets:
+        condition: service_completed_successfully
+  
+  synapse:
+    image: ghcr.io/element-hq/synapse:latest
+    user: $USER_ID:$GROUP_ID
+    restart: unless-stopped
+    volumes:
+      - ${VOLUME_PATH}/data/synapse:/data:rw
+    ports:
+      - 8008:8008
+    networks:
+      - backend
+    environment:
+      SYNAPSE_CONFIG_DIR: /data
+      SYNAPSE_CONFIG_PATH: /data/homeserver.yaml
+    secrets:
+      - synapse_signing_key
+    depends_on:
+      postgres:
+        condition: service_healthy
+      init:
+        condition: service_completed_successfully
+  
+  synapse-admin:
+    image: ghcr.io/etkecc/synapse-admin:latest
+    ports:
+      - "8009:80"
+    restart: unless-stopped
+    volumes:
+      - ./synapse-admin-config.json:/app/config.json:ro
+    depends_on:
+      synapse:
+        condition: service_healthy
+      init:
+        condition: service_completed_successfully

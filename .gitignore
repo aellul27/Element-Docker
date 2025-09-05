@@ -4,3 +4,5 @@ secrets/
 .env.orig
 
 .env
+
+data/
