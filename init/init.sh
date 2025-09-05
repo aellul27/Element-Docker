@@ -21,6 +21,16 @@ then
 	head -c16 /dev/urandom | base64 | tr -d '=' > /secrets/postgres/postgres_password
 fi
 
+mkdir -p /secrets/livekit
+if [[ ! -s /secrets/livekit/livekit_api_key ]]
+then
+	(echo -n API; (head -c8 /dev/urandom | base64)) | tr -d '=' > /secrets/livekit/livekit_api_key
+fi
+if [[ ! -s /secrets/livekit/livekit_secret_key ]]
+then
+	head -c28 /dev/urandom | base64 | tr -d '=' > /secrets/livekit/livekit_secret_key
+fi
+
 template() {
 	dir=$1
 	echo "Templating configs in $dir"
@@ -39,5 +49,10 @@ export DOLLAR='$' # evil hack to escape dollars in config files
 	export SECRETS_POSTGRES_PASSWORD=$(</secrets/postgres/postgres_password)
 	template "/data-template/synapse"
 )
-
+(
+	export SECRETS_LIVEKIT_API_KEY=$(</secrets/livekit/livekit_api_key)
+	export SECRETS_LIVEKIT_SECRET_KEY=$(</secrets/livekit/livekit_secret_key)
+	template "/data-template/livekit"
+)
 template "/data-template/element-web"
+template "/data-template/element-call"
