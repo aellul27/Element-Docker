@@ -39,3 +39,5 @@ export DOLLAR='$' # evil hack to escape dollars in config files
 	export SECRETS_POSTGRES_PASSWORD=$(</secrets/postgres/postgres_password)
 	template "/data-template/synapse"
 )
+
+template "/data-template/element-web"

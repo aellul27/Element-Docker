@@ -1,0 +1,35 @@
+{
+    "default_server_config": {
+        "m.homeserver": {
+            "base_url": "https://${HOMESERVER_FQDN}",
+            "server_name": "${DOMAIN}"
+        }
+    },
+    "disable_custom_urls": true,
+    "disable_guests": true,
+    "disable_login_language_selector": false,
+    "disable_3pid_login": true,
+    "force_verification": false,
+    "brand": "Element",
+    "default_widget_container_height": 280,
+    "default_country_code": "${COUNTRY}",
+    "show_labs_settings": false,
+    "features": {
+        "feature_video_rooms": true,
+        "feature_group_calls": true,
+        "feature_element_call_video_rooms": true,
+        "feature_oidc_native_flow": true
+    },
+    "default_federate": true,
+    "default_theme": "light",
+    "room_directory": {
+        "servers": ["${DOMAIN}"]
+    },
+    "setting_defaults": {
+        "breadcrumbs": true
+    },
+    "element_call": {
+        "url": "https://${ELEMENT_CALL_FQDN}"
+    },
+    "map_style_url": "https://api.maptiler.com/maps/streets/style.json?key=fU3vlMsMn4Jb6dnEIFsx"
+}
