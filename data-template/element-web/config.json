@@ -26,7 +26,8 @@
         "servers": ["${DOMAIN}"]
     },
     "setting_defaults": {
-        "breadcrumbs": true
+        "breadcrumbs": true,
+        "UIFeature.identityServer": false
     },
     "element_call": {
         "url": "https://${ELEMENT_CALL_FQDN}"
