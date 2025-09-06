@@ -42,11 +42,28 @@ template() {
 }
 
 export DOLLAR='$' # evil hack to escape dollars in config files
+
+# Source email config generator
+source /mail.sh
+
 (
 	export SECRETS_SYNAPSE_REGISTRATION_SHARED_SECRET=$(</secrets/synapse/registration_shared_secret)
 	export SECRETS_SYNAPSE_MACAROON_SECRET_KEY=$(</secrets/synapse/macaroon_secret_key)
 	export SECRETS_SYNAPSE_FORM_SECRET=$(</secrets/synapse/form_secret)
 	export SECRETS_POSTGRES_PASSWORD=$(</secrets/postgres/postgres_password)
+	
+	# Generate recaptcha config if keys exist
+	if [[ -s /secrets/recaptcha_public ]] && [[ -s /secrets/recaptcha_private ]]; then
+		export RECAPTCHA_CONFIG="recaptcha_public_key: $(</secrets/recaptcha_public)
+recaptcha_private_key: $(</secrets/recaptcha_private)
+enable_registration_captcha: true"
+	else
+		export RECAPTCHA_CONFIG=""
+	fi
+	
+	# Generate email config
+	generate_email_config
+	
 	template "/data-template/synapse"
 )
 (

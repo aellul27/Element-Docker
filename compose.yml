@@ -60,6 +60,7 @@ services:
       - ${VOLUME_PATH}/data:/data
       - ${VOLUME_PATH}/data-template:/data-template
       - ${VOLUME_PATH}/init/init.sh:/init.sh
+      - ${VOLUME_PATH}/init/mail.sh:/mail.sh
     command: "/init.sh"
     env_file: .env
     depends_on:

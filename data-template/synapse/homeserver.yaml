@@ -46,6 +46,7 @@ public_baseurl: https://${HOMESERVER_FQDN}/
 suppress_key_server_warning: true
 
 enable_registration: true
+${RECAPTCHA_CONFIG}
 
 # redis:
 #   enabled: true
@@ -56,6 +57,8 @@ enable_registration: true
 # as possible don't sleep between background updates
 background_updates:
     sleep_enabled: false
+
+${EMAIL_CONFIG}
 
 # temporarily boost rate-limits to avoid breaking WIP MatrixRTC signalling
 rc_message:
