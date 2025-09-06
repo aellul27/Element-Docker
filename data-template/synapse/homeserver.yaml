@@ -73,6 +73,8 @@ rc_delayed_event_mgmt:
   per_second: 1
   burst_count: 20
 
+disable_msisdn_registration: true
+
 experimental_features:
   # msc3861: # OIDC
   #   enabled: true
