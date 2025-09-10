@@ -104,7 +104,7 @@ services:
       - "8009:80"
     restart: unless-stopped
     volumes:
-      - ./synapse-admin-config.json:/app/config.json:ro
+      - ${VOLUME_PATH}/data/synapse-admin/config.json:/app/config.json
     depends_on:
       synapse:
         condition: service_healthy

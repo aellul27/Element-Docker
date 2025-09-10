@@ -5,7 +5,7 @@ set -e
 
 # set up data & secrets dir with the right ownerships in the default location
 # to stop docker autocreating them with random owners.
-mkdir -p data/{element-{web,call},livekit,mas,nginx/{ssl,www,conf.d},postgres,synapse}
+mkdir -p data/{element-{web,call},livekit,mas,synapse-admin,postgres,synapse}
 mkdir -p secrets/{livekit,postgres,synapse}
 
 touch secrets/livekit/livekit_{api,secret}_key \

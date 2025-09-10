@@ -53,9 +53,9 @@ source /mail.sh
 	export SECRETS_POSTGRES_PASSWORD=$(</secrets/postgres/postgres_password)
 	
 	# Generate recaptcha config if keys exist
-	if [[ -s /secrets/recaptcha_public ]] && [[ -s /secrets/recaptcha_private ]]; then
-		export RECAPTCHA_CONFIG="recaptcha_public_key: $(</secrets/recaptcha_public)
-recaptcha_private_key: $(</secrets/recaptcha_private)
+	if [[ -s /secrets/recaptcha/public ]] && [[ -s /secrets/recaptcha/private ]]; then
+		export RECAPTCHA_CONFIG="recaptcha_public_key: $(</secrets/recaptcha/public)
+recaptcha_private_key: $(</secrets/recaptcha/private)
 enable_registration_captcha: true"
 	else
 		export RECAPTCHA_CONFIG=""
@@ -72,4 +72,5 @@ enable_registration_captcha: true"
 	template "/data-template/livekit"
 )
 template "/data-template/element-web"
+template "/data-template/synapse-admin"
 template "/data-template/element-call"
